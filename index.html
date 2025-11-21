@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Cloud Notes</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Quicksand -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Quicksand', sans-serif;
+        }
+        
+        :root {
+            --primary: #850E35;
+            --secondary: #EE6983;
+            --light: #FFF5E4;
+        }
+        
+        body {
+            background-color: var(--light);
+            min-height: 100vh;
+        }
+        
+        /* Header with Background Image */
+        .hero-header {
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+        
+        .hero-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .hero-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .hero-slide.active {
+            opacity: 0.6;
+        }
+        
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+        
+        .hero-content {
+            text-align: center;
+            color: white;
+            z-index: 2;
+        }
+        
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+        }
+        
+        .hero-content p {
+            font-size: 1.3rem;
+            font-weight: 400;
+            animation: fadeInUp 1.2s ease;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+        }
+        
+        .navbar-brand {
+            color: var(--primary) !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .navbar-brand i {
+            color: var(--secondary);
+        }
+        
+        .nav-link {
+            color: var(--primary) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            color: var(--secondary) !important;
+            transform: translateY(-2px);
+        }
+        
+        .nav-link.active {
+            color: var(--secondary) !important;
+        }
+        
+        /* Cards */
+        .recipe-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: white;
+            height: 100%;
+        }
+        
+        .recipe-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(133, 14, 53, 0.2);
+        }
+        
+        .recipe-card img {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+        
+        .recipe-card .card-body {
+            padding: 1.5rem;
+        }
+        
+        .recipe-card .card-title {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .badge-category {
+            background-color: var(--secondary);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        /* Buttons */
+        .btn-primary {
+            background-color: var(--primary);
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(238, 105, 131, 0.3);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        /* Forms */
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            padding: 0.7rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 0.2rem rgba(238, 105, 131, 0.25);
+        }
+        
+        /* Search Bar */
+        .search-container {
+            position: relative;
+            max-width: 500px;
+            margin: 2rem auto;
+        }
+        
+        .search-container input {
+            padding-left: 3rem;
+        }
+        
+        .search-container i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--secondary);
+        }
+        
+        /* Category Pills */
+
+        #categoriesPage {
+    position: relative;
+    overflow: hidden;
+}
+
+#categoriesPage .bg-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1; /* masuk belakang */
+    filter: brightness(0.6); /* biar teks makin kebaca */
+}
+
+#categoriesPage .detail-header {
+    position: relative;
+    z-index: 10; /* pastiin teks ada di depan video */
+    padding: 60px 0;
+}
+
+        .category-pill {
+            display: inline-block;
+            padding: 0.6rem 1.5rem;
+            margin: 0.3rem;
+            background-color: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .category-pill:hover, .category-pill.active {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(133, 14, 53, 0.2);
+        }
+        
+        /* Login/Register Modal */
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 20px 20px 0 0;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease;
+        }
+        
+        /* Detail Page */
+        .detail-header {
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .detail-image {
+            width: 100%;
+            max-height: 500px;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .section-title {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 5px solid var(--secondary);
+            padding-left: 1rem;
+        }
+        
+        /* Profile Card */
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 3rem;
+            color: white;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            .hero-content p {
+                font-size: 1rem;
+            }
+            
+            .hero-header {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#" onclick="showPage('home')">
+                <i class="fas fa-utensils"></i> Recipe Cloud Notes
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto" id="mainNav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="showPage('home')">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('add-recipe')">
+                            <i class="fas fa-plus-circle"></i> Add Recipe
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('categories')">
+                            <i class="fas fa-th-large"></i> Categories
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('about')">
+                            <i class="fas fa-info-circle"></i> About Us
+                        </a>
+                    </li>
+                    <li class="nav-item" id="profileNav" style="display: none;">
+                        <a class="nav-link" href="#" onclick="showPage('profile')">
+                            <i class="fas fa-user"></i> Profile
+                        </a>
+                    </li>
+                    <li class="nav-item" id="loginNav">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                    </li>
+                    <li class="nav-item" id="logoutNav" style="display: none;">
+                        <a class="nav-link" href="#" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div id="app">
+        <!-- Home Page -->
+        <div id="homePage" class="page">
+            <!-- Hero Header -->
+            <div class="hero-header">
+                <div class="hero-slider">
+                    <div class="hero-slide active" style="background-image: url('asset/rcp1.jpg');"></div>
+                    <div class="hero-slide" style="background-image: url('asset/rcp2.jpg');"></div>
+                    <div class="hero-slide" style="background-image: url('asset/rcp3.jpg');"></div>
+                    <div class="hero-slide" style="background-image: url('asset/rcp4.jpg');"></div>
+                </div>
+                <div class="hero-overlay">
+                    <div class="hero-content">
+                        <h1><i class="fas fa-cloud"></i> Recipe Cloud Notes</h1>
+                        <p>Simpan & Bagikan Resep Favoritmu</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container mt-5">
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="form-control" id="searchInput" placeholder="Cari resep berdasarkan judul atau kategori...">
+                </div>
+
+                <!-- Recipe Grid -->
+                <h2 class="text-center mb-4" style="color: var(--primary); font-weight: 700;">
+                    <i class="fas fa-fire"></i> Resep Terbaru
+                </h2>
+                <div class="row" id="recipeGrid">
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-utensils fa-3x mb-3" style="color: var(--secondary);"></i>
+                        <p class="text-muted">Belum ada resep. Mulai tambahkan resep favoritmu!</p>
+                        <button class="btn btn-primary mt-3" onclick="showPage('add-recipe')">
+                            <i class="fas fa-plus"></i> Tambah Resep Pertama
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Recipe Page -->
+        <div id="addRecipePage" class="page hidden">
+            <div class="container mt-5 mb-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="card shadow-lg border-0 rounded-4">
+                            <div class="card-header text-white text-center py-4" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 1rem 1rem 0 0;">
+                                <h3 class="mb-0"><i class="fas fa-plus-circle"></i> Tambah Resep Baru</h3>
+                            </div>
+                            <div class="card-body p-4">
+                                <form id="recipeForm" onsubmit="saveRecipe(event)">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold"><i class="fas fa-heading"></i> Judul Resep</label>
+                                        <input type="text" class="form-control" id="recipeTitle" required>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold"><i class="fas fa-tag"></i> Kategori</label>
+                                        <select class="form-select" id="recipeCategory" required>
+                                            <option value="">Pilih kategori...</option>
+                                            <option value="Makanan Utama">Makanan Utama</option>
+                                            <option value="Makanan Penutup">Makanan Penutup</option>
+                                            <option value="Minuman">Minuman</option>
+                                            <option value="Camilan">Camilan</option>
+                                            <option value="Sarapan">Sarapan</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold"><i class="fas fa-list"></i> Bahan-bahan</label>
+                                        <textarea class="form-control" id="recipeIngredients" rows="5" placeholder="Contoh:&#10;- 2 kg ayam&#10;- 5 siung bawang putih&#10;- 1 sdm garam" required></textarea>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold"><i class="fas fa-tasks"></i> Langkah-langkah Memasak</label>
+                                        <textarea class="form-control" id="recipeSteps" rows="6" placeholder="Contoh:&#10;1. Panaskan minyak dalam wajan&#10;2. Tumis bawang putih hingga harum&#10;3. Masukkan ayam..." required></textarea>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold"><i class="fas fa-image"></i> Foto Resep</label>
+                                        <input type="file" class="form-control" id="recipeImage" accept="image/*" onchange="previewImage(event)">
+                                        <div id="imagePreview" class="mt-3 text-center hidden">
+                                            <img id="preview" src="" alt="Preview" style="max-width: 100%; max-height: 300px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-primary btn-lg">
+                                            <i class="fas fa-save"></i> Simpan Resep
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" onclick="showPage('home')">
+                                            <i class="fas fa-times"></i> Batal
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Page -->
+<div id="categoriesPage" class="page hidden">
+
+    <!-- VIDEO BACKGROUND -->
+    <video autoplay muted loop playsinline class="bg-video">
+        <source src="asset/vid1.mp4" type="video/mp4">
+    </video>
+
+    <div class="detail-header">
+        <div class="container text-center">
+            <h1><i class="fas fa-th-large"></i> Kategori Resep</h1>
+            <p>Jelajahi resep berdasarkan kategori favorit</p>
+        </div>
+    </div>
+</div>
+
+            
+            <div class="container mb-5">
+                <div class="text-center mb-4">
+                    <div class="category-pill active" onclick="filterByCategory('all')">Semua</div>
+                    <div class="category-pill" onclick="filterByCategory('Makanan Utama')">Makanan Utama</div>
+                    <div class="category-pill" onclick="filterByCategory('Makanan Penutup')">Makanan Penutup</div>
+                    <div class="category-pill" onclick="filterByCategory('Minuman')">Minuman</div>
+                    <div class="category-pill" onclick="filterByCategory('Camilan')">Camilan</div>
+                    <div class="category-pill" onclick="filterByCategory('Sarapan')">Sarapan</div>
+                </div>
+                
+                <div class="row" id="categoryRecipeGrid">
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-utensils fa-3x mb-3" style="color: var(--secondary);"></i>
+                        <p class="text-muted">Belum ada resep dalam kategori ini</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Page -->
+        <div id="aboutPage" class="page hidden">
+            <div class="detail-header">
+                <div class="container text-center">
+                    <h1><i class="fas fa-info-circle"></i> Tentang Kami</h1>
+                    <p>Kenali lebih dekat Recipe Cloud Notes</p>
+                </div>
+            </div>
+            
+            <div class="container mb-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="card shadow-lg border-0 rounded-4 mb-4">
+                            <div class="card-body p-5">
+                                <div class="text-center mb-4">
+                                    <i class="fas fa-cloud-upload-alt fa-4x mb-3" style="color: var(--secondary);"></i>
+                                    <h2 style="color: var(--primary); font-weight: 700;">Recipe Cloud Notes</h2>
+                                </div>
+                                
+                                <p class="lead text-center mb-4">
+                                    Platform penyimpanan resep masakan berbasis cloud yang memudahkan Anda untuk menyimpan, mengatur, dan mengakses resep favorit kapan saja, di mana saja.
+                                </p>
+                                
+                                <hr class="my-4">
+                                
+                                <h4 style="color: var(--primary);" class="mb-3"><i class="fas fa-star"></i> Fitur Utama</h4>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-check-circle" style="color: var(--secondary);"></i> Penyimpanan resep yang aman dan terorganisir</li>
+                                    <li class="mb-2"><i class="fas fa-check-circle" style="color: var(--secondary);"></i> Upload foto resep dengan kualitas tinggi</li>
+                                    <li class="mb-2"><i class="fas fa-check-circle" style="color: var(--secondary);"></i> Kategorisasi resep untuk memudahkan pencarian</li>
+                                    <li class="mb-2"><i class="fas fa-check-circle" style="color: var(--secondary);"></i> Pencarian cepat berdasarkan judul dan kategori</li>
+                                    <li class="mb-2"><i class="fas fa-check-circle" style="color: var(--secondary);"></i> Akses dari berbagai perangkat</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="card shadow-lg border-0 rounded-4">
+                            <div class="card-body p-5 text-center">
+                                <div class="profile-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <h4 style="color: var(--primary); font-weight: 700;">Anissa</h4>
+                                <p class="text-muted mb-1">NIM: 062302033</p>
+                                <p class="text-muted">Prodi: Bisnis Digital</p>
+                                <hr class="my-4">
+                                <p class="mb-0">
+                                    <i class="fas fa-quote-left" style="color: var(--secondary);"></i>
+                                    Website ini dikembangkan sebagai solusi modern untuk menyimpan dan mengelola resep masakan secara digital.
+                                    <i class="fas fa-quote-right" style="color: var(--secondary);"></i>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Page -->
+        <div id="profilePage" class="page hidden">
+            <div class="detail-header">
+                <div class="container text-center">
+                    <h1><i class="fas fa-user-circle"></i> Profil Saya</h1>
+                    <p>Kelola akun dan resep Anda</p>
+                </div>
+            </div>
+            
+            <div class="container mb-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="profile-card text-center">
+                            <div class="profile-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <h3 style="color: var(--primary); font-weight: 700;" id="profileUsername">Username</h3>
+                            <p class="text-muted" id="profileEmail">email@example.com</p>
+                            <hr class="my-4">
+                            <div class="row text-center">
+                                <div class="col-md-6 mb-3">
+                                    <h4 style="color: var(--secondary);" id="totalRecipes">0</h4>
+                                    <p class="text-muted">Total Resep</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <h4 style="color: var(--secondary);" id="memberSince">-</h4>
+                                    <p class="text-muted">Bergabung Sejak</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card shadow-lg border-0 rounded-4 mt-4">
+                            <div class="card-header text-white py-3" style="background: linear-gradient(135deg, var(--primary), var(--secondary));">
+                                <h5 class="mb-0"><i class="fas fa-book"></i> Resep Saya</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row" id="myRecipesGrid">
+                                    <div class="col-12 text-center py-4">
+                                        <p class="text-muted">Anda belum memiliki resep</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detail Recipe Page -->
+        <div id="detailPage" class="page hidden">
+            <div class="detail-header">
+                <div class="container">
+                    <button class="btn btn-light mb-3" onclick="showPage('home')">
+                        <i class="fas fa-arrow-left"></i> Kembali
+                    </button>
+                    <h1 id="detailTitle">Judul Resep</h1>
+                    <p><span class="badge-category" id="detailCategory">Kategori</span></p>
+                </div>
+            </div>
+            
+            <div class="container mb-5">
+                <div class="row">
+                    <div class="col-lg-6 mb-4">
+                        <img id="detailImage" src="" alt="Recipe Image" class="detail-image">
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="mb-4">
+                            <h3 class="section-title"><i class="fas fa-list-ul"></i> Bahan-bahan</h3>
+                            <div id="detailIngredients" style="white-space: pre-wrap;"></div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h3 class="section-title"><i class="fas fa-clipboard-list"></i> Langkah-langkah</h3>
+                            <div id="detailSteps" style="white-space: pre-wrap;"></div>
+                        </div>
+                        
+                        <div id="detailActions" class="mt-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <p class="mb-0">
+                <i class="fas fa-heart" style="color: var(--secondary);"></i> 
+                Recipe Cloud Notes &copy; 2024 | Anissa - 062302033 - Bisnis Digital
+            </p>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-sign-in-alt"></i> Login / Register</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <!-- Login Form -->
+                    <div id="loginForm">
+                        <h6 class="mb-3 fw-bold">Login ke Akun Anda</h6>
+                        <form onsubmit="login(event)">
+                            <div class="mb-3">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-control" id="loginUsername" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-control" id="loginPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 mb-2">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </button>
+                        </form>
+                        <hr>
+                        <p class="text-center mb-0">
+                            Belum punya akun? 
+                            <a href="#" style="color: var(--secondary); font-weight: 600;" onclick="toggleForm()">Daftar di sini</a>
+                        </p>
+                    </div>
+                    
+                    <!-- Register Form -->
+                    <div id="registerForm" class="hidden">
+                        <h6 class="mb-3 fw-bold">Buat Akun Baru</h6>
+                        <form onsubmit="register(event)">
+                            <div class="mb-3">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-control" id="registerUsername" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="registerEmail" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-control" id="registerPassword" required minlength="6">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 mb-2">
+                                <i class="fas fa-user-plus"></i> Daftar
+                            </button>
+                        </form>
+                        <hr>
+                        <p class="text-center mb-0">
+                            Sudah punya akun? 
+                            <a href="#" style="color: var(--secondary); font-weight: 600;" onclick="toggleForm()">Login di sini</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Recipe Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-edit"></i> Edit Resep</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editRecipeForm" onsubmit="updateRecipe(event)">
+                        <input type="hidden" id="editRecipeId">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Judul Resep</label>
+                            <input type="text" class="form-control" id="editRecipeTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Kategori</label>
+                            <select class="form-select" id="editRecipeCategory" required>
+                                <option value="Makanan Utama">Makanan Utama</option>
+                                <option value="Makanan Penutup">Makanan Penutup</option>
+                                <option value="Minuman">Minuman</option>
+                                <option value="Camilan">Camilan</option>
+                                <option value="Sarapan">Sarapan</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Bahan-bahan</label>
+                            <textarea class="form-control" id="editRecipeIngredients" rows="5" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Langkah-langkah</label>
+                            <textarea class="form-control" id="editRecipeSteps" rows="6" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Foto Resep (opsional - kosongkan jika tidak ingin mengubah)</label>
+                            <input type="file" class="form-control" id="editRecipeImage" accept="image/*" onchange="previewEditImage(event)">
+                            <div id="editImagePreview" class="mt-3 text-center">
+                                <img id="editPreview" src="" alt="Preview" style="max-width: 100%; max-height: 300px; border-radius: 15px;">
+                            </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Simpan Perubahan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- AOS Animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+
+    <script>
+        // Global Variables
+        let currentUser = null;
+        let currentRecipeId = null;
+        let recipes = [];
+        let users = [];
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            checkSession();
+            startHeroSlider();
+            setupSearch();
+            
+            // Initialize AOS Animation
+            if (typeof AOS !== 'undefined') {
+                AOS.init({
+                    duration: 800,
+                    once: true
+                });
+            }
+        });
+
+        // Hero Slider
+        function startHeroSlider() {
+            let currentSlide = 0;
+            const slides = document.querySelectorAll('.hero-slide');
+            
+            setInterval(() => {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }, 4000);
+        }
+
+        // Load Data from LocalStorage
+        function loadData() {
+            const savedRecipes = localStorage.getItem('recipes');
+            const savedUsers = localStorage.getItem('users');
+            
+            if (savedRecipes) {
+                recipes = JSON.parse(savedRecipes);
+            }
+            
+            if (savedUsers) {
+                users = JSON.parse(savedUsers);
+            }
+            
+            displayRecipes();
+        }
+
+        // Save Data to LocalStorage
+        function saveData() {
+            localStorage.setItem('recipes', JSON.stringify(recipes));
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        // Check Session
+        function checkSession() {
+            const savedSession = localStorage.getItem('currentUser');
+            if (savedSession) {
+                currentUser = JSON.parse(savedSession);
+                updateNavbar();
+            }
+        }
+
+        // Toggle Login/Register Form
+        function toggleForm() {
+            document.getElementById('loginForm').classList.toggle('hidden');
+            document.getElementById('registerForm').classList.toggle('hidden');
+        }
+
+        // Register
+        function register(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('registerUsername').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            
+            // Check if username exists
+            if (users.find(u => u.username === username)) {
+                alert('Username sudah digunakan!');
+                return;
+            }
+            
+            const newUser = {
+                id: Date.now(),
+                username: username,
+                email: email,
+                password: password,
+                joinDate: new Date().toLocaleDateString('id-ID')
+            };
+            
+            users.push(newUser);
+            saveData();
+            
+            alert('Registrasi berhasil! Silakan login.');
+            toggleForm();
+            document.getElementById('registerForm').querySelector('form').reset();
+        }
+
+        // Login
+        function login(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                updateNavbar();
+                
+                const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                modal.hide();
+                
+                document.getElementById('loginForm').querySelector('form').reset();
+                
+                showNotification('Login berhasil! Selamat datang, ' + user.username);
+            } else {
+                alert('Username atau password salah!');
+            }
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('Yakin ingin logout?')) {
+                currentUser = null;
+                localStorage.removeItem('currentUser');
+                updateNavbar();
+                showPage('home');
+                showNotification('Logout berhasil!');
+            }
+        }
+
+        // Update Navbar
+        function updateNavbar() {
+            if (currentUser) {
+                document.getElementById('loginNav').style.display = 'none';
+                document.getElementById('logoutNav').style.display = 'block';
+                document.getElementById('profileNav').style.display = 'block';
+            } else {
+                document.getElementById('loginNav').style.display = 'block';
+                document.getElementById('logoutNav').style.display = 'none';
+                document.getElementById('profileNav').style.display = 'none';
+            }
+        }
+
+        // Show Notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3 fade-in';
+            notification.style.zIndex = '9999';
+            notification.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Preview Image
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('preview').src = e.target.result;
+                    document.getElementById('imagePreview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Preview Edit Image
+        function previewEditImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('editPreview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Save Recipe
+        function saveRecipe(event) {
+            event.preventDefault();
+            
+            if (!currentUser) {
+                alert('Silakan login terlebih dahulu untuk menambah resep!');
+                const modal = new bootstrap.Modal(document.getElementById('loginModal'));
+                modal.show();
+                return;
+            }
+            
+            const title = document.getElementById('recipeTitle').value;
+            const category = document.getElementById('recipeCategory').value;
+            const ingredients = document.getElementById('recipeIngredients').value;
+            const steps = document.getElementById('recipeSteps').value;
+            const imageFile = document.getElementById('recipeImage').files[0];
+            
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const recipe = {
+                        id: Date.now(),
+                        title: title,
+                        category: category,
+                        ingredients: ingredients,
+                        steps: steps,
+                        image: e.target.result,
+                        userId: currentUser.id,
+                        username: currentUser.username,
+                        date: new Date().toLocaleDateString('id-ID')
+                    };
+                    
+                    recipes.unshift(recipe);
+                    saveData();
+                    displayRecipes();
+                    
+                    document.getElementById('recipeForm').reset();
+                    document.getElementById('imagePreview').classList.add('hidden');
+                    
+                    showNotification('Resep berhasil ditambahkan!');
+                    showPage('home');
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                const recipe = {
+                    id: Date.now(),
+                    title: title,
+                    category: category,
+                    ingredients: ingredients,
+                    steps: steps,
+                    image: 'https://via.placeholder.com/400x300/850E35/ffffff?text=No+Image',
+                    userId: currentUser.id,
+                    username: currentUser.username,
+                    date: new Date().toLocaleDateString('id-ID')
+                };
+                
+                recipes.unshift(recipe);
+                saveData();
+                displayRecipes();
+                
+                document.getElementById('recipeForm').reset();
+                
+                showNotification('Resep berhasil ditambahkan!');
+                showPage('home');
+            }
+        }
+
+        // Display Recipes
+        function displayRecipes(filteredRecipes = null) {
+            const recipesToDisplay = filteredRecipes || recipes;
+            const grid = document.getElementById('recipeGrid');
+            
+            if (recipesToDisplay.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-utensils fa-3x mb-3" style="color: var(--secondary);"></i>
+                        <p class="text-muted">Belum ada resep. Mulai tambahkan resep favoritmu!</p>
+                        <button class="btn btn-primary mt-3" onclick="showPage('add-recipe')">
+                            <i class="fas fa-plus"></i> Tambah Resep Pertama
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = '';
+            recipesToDisplay.forEach((recipe, index) => {
+                const col = document.createElement('div');
+                col.className = 'col-md-6 col-lg-4 mb-4 fade-in-up';
+                col.style.animationDelay = `${index * 0.1}s`;
+                col.innerHTML = `
+                    <div class="recipe-card" onclick="showRecipeDetail(${recipe.id})">
+                        <img src="${recipe.image}" alt="${recipe.title}">
+                        <div class="card-body">
+                            <h5 class="card-title">${recipe.title}</h5>
+                            <span class="badge-category">${recipe.category}</span>
+                            <p class="text-muted mt-2 mb-0">
+                                <i class="fas fa-user"></i> ${recipe.username} | 
+                                <i class="fas fa-calendar"></i> ${recipe.date}
+                            </p>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(col);
+            });
+        }
+
+        // Show Recipe Detail
+        function showRecipeDetail(recipeId) {
+            const recipe = recipes.find(r => r.id === recipeId);
+            if (!recipe) return;
+            
+            currentRecipeId = recipeId;
+            
+            document.getElementById('detailTitle').textContent = recipe.title;
+            document.getElementById('detailCategory').textContent = recipe.category;
+            document.getElementById('detailImage').src = recipe.image;
+            document.getElementById('detailIngredients').textContent = recipe.ingredients;
+            document.getElementById('detailSteps').textContent = recipe.steps;
+            
+            const actionsDiv = document.getElementById('detailActions');
+            if (currentUser && currentUser.id === recipe.userId) {
+                actionsDiv.innerHTML = `
+                    <button class="btn btn-primary me-2" onclick="openEditModal(${recipeId})">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteRecipe(${recipeId})">
+                        <i class="fas fa-trash"></i> Hapus
+                    </button>
+                `;
+            } else {
+                actionsDiv.innerHTML = `
+                    <p class="text-muted">
+                        <i class="fas fa-user"></i> Dibuat oleh: ${recipe.username}
+                    </p>
+                `;
+            }
+            
+            showPage('detail');
+        }
+
+        // Open Edit Modal
+        function openEditModal(recipeId) {
+            const recipe = recipes.find(r => r.id === recipeId);
+            if (!recipe) return;
+            
+            document.getElementById('editRecipeId').value = recipe.id;
+            document.getElementById('editRecipeTitle').value = recipe.title;
+            document.getElementById('editRecipeCategory').value = recipe.category;
+            document.getElementById('editRecipeIngredients').value = recipe.ingredients;
+            document.getElementById('editRecipeSteps').value = recipe.steps;
+            document.getElementById('editPreview').src = recipe.image;
+            
+            const modal = new bootstrap.Modal(document.getElementById('editModal'));
+            modal.show();
+        }
+
+        // Update Recipe
+        function updateRecipe(event) {
+            event.preventDefault();
+            
+            const recipeId = parseInt(document.getElementById('editRecipeId').value);
+            const recipeIndex = recipes.findIndex(r => r.id === recipeId);
+            
+            if (recipeIndex === -1) return;
+            
+            const title = document.getElementById('editRecipeTitle').value;
+            const category = document.getElementById('editRecipeCategory').value;
+            const ingredients = document.getElementById('editRecipeIngredients').value;
+            const steps = document.getElementById('editRecipeSteps').value;
+            const imageFile = document.getElementById('editRecipeImage').files[0];
+            
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    recipes[recipeIndex] = {
+                        ...recipes[recipeIndex],
+                        title: title,
+                        category: category,
+                        ingredients: ingredients,
+                        steps: steps,
+                        image: e.target.result
+                    };
+                    
+                    saveData();
+                    displayRecipes();
+                    showRecipeDetail(recipeId);
+                    
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+                    modal.hide();
+                    
+                    showNotification('Resep berhasil diupdate!');
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                recipes[recipeIndex] = {
+                    ...recipes[recipeIndex],
+                    title: title,
+                    category: category,
+                    ingredients: ingredients,
+                    steps: steps
+                };
+                
+                saveData();
+                displayRecipes();
+                showRecipeDetail(recipeId);
+                
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+                modal.hide();
+                
+                showNotification('Resep berhasil diupdate!');
+            }
+        }
+
+        // Delete Recipe
+        function deleteRecipe(recipeId) {
+            if (confirm('Yakin ingin menghapus resep ini?')) {
+                recipes = recipes.filter(r => r.id !== recipeId);
+                saveData();
+                displayRecipes();
+                showNotification('Resep berhasil dihapus!');
+                showPage('home');
+            }
+        }
+
+        // Setup Search
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function(e) {
+                const keyword = e.target.value.toLowerCase();
+                const filtered = recipes.filter(r => 
+                    r.title.toLowerCase().includes(keyword) || 
+                    r.category.toLowerCase().includes(keyword)
+                );
+                displayRecipes(filtered);
+            });
+        }
+
+        // Filter by Category
+        function filterByCategory(category) {
+            // Update active pill
+            document.querySelectorAll('.category-pill').forEach(pill => {
+                pill.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            const grid = document.getElementById('categoryRecipeGrid');
+            
+            let filtered = recipes;
+            if (category !== 'all') {
+                filtered = recipes.filter(r => r.category === category);
+            }
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-utensils fa-3x mb-3" style="color: var(--secondary);"></i>
+                        <p class="text-muted">Belum ada resep dalam kategori ini</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = '';
+            filtered.forEach((recipe, index) => {
+                const col = document.createElement('div');
+                col.className = 'col-md-6 col-lg-4 mb-4 fade-in-up';
+                col.style.animationDelay = `${index * 0.1}s`;
+                col.innerHTML = `
+                    <div class="recipe-card" onclick="showRecipeDetail(${recipe.id})">
+                        <img src="${recipe.image}" alt="${recipe.title}">
+                        <div class="card-body">
+                            <h5 class="card-title">${recipe.title}</h5>
+                            <span class="badge-category">${recipe.category}</span>
+                            <p class="text-muted mt-2 mb-0">
+                                <i class="fas fa-user"></i> ${recipe.username}
+                            </p>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(col);
+            });
+        }
+
+        // Show Page
+        function showPage(pageName) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.add('hidden');
+            });
+            
+            // Remove active from nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected page
+            if (pageName === 'home') {
+                document.getElementById('homePage').classList.remove('hidden');
+                displayRecipes();
+            } else if (pageName === 'add-recipe') {
+                if (!currentUser) {
+                    alert('Silakan login terlebih dahulu!');
+                    const modal = new bootstrap.Modal(document.getElementById('loginModal'));
+                    modal.show();
+                    return;
+                }
+                document.getElementById('addRecipePage').classList.remove('hidden');
+            } else if (pageName === 'categories') {
+                document.getElementById('categoriesPage').classList.remove('hidden');
+                filterByCategory('all');
+            } else if (pageName === 'about') {
+                document.getElementById('aboutPage').classList.remove('hidden');
+            } else if (pageName === 'profile') {
+                if (!currentUser) {
+                    alert('Silakan login terlebih dahulu!');
+                    const modal = new bootstrap.Modal(document.getElementById('loginModal'));
+                    modal.show();
+                    return;
+                }
+                document.getElementById('profilePage').classList.remove('hidden');
+                loadProfile();
+            } else if (pageName === 'detail') {
+                document.getElementById('detailPage').classList.remove('hidden');
+            }
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Load Profile
+        function loadProfile() {
+            if (!currentUser) return;
+            
+            document.getElementById('profileUsername').textContent = currentUser.username;
+            document.getElementById('profileEmail').textContent = currentUser.email;
+            document.getElementById('memberSince').textContent = currentUser.joinDate;
+            
+            const userRecipes = recipes.filter(r => r.userId === currentUser.id);
+            document.getElementById('totalRecipes').textContent = userRecipes.length;
+            
+            const grid = document.getElementById('myRecipesGrid');
+            
+            if (userRecipes.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-12 text-center py-4">
+                        <p class="text-muted">Anda belum memiliki resep</p>
+                        <button class="btn btn-primary mt-2" onclick="showPage('add-recipe')">
+                            <i class="fas fa-plus"></i> Tambah Resep
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = '';
+            userRecipes.forEach((recipe, index) => {
+                const col = document.createElement('div');
+                col.className = 'col-md-6 mb-3';
+                col.innerHTML = `
+                    <div class="recipe-card" onclick="showRecipeDetail(${recipe.id})">
+                        <img src="${recipe.image}" alt="${recipe.title}">
+                        <div class="card-body">
+                            <h5 class="card-title">${recipe.title}</h5>
+                            <span class="badge-category">${recipe.category}</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(col);
+            });
+        }
+    </script>
+</body>
+</html>
